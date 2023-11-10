@@ -121,7 +121,7 @@ class TestPipelines(unittest.TestCase):
         Test batch caption via API
         """
 
-        path = Utils.PATH + "/books.jpg"
+        path = f"{Utils.PATH}/books.jpg"
 
         captions = self.client.post("batchcaption", json=[path, path]).json()
         self.assertEqual(captions, ["a book shelf filled with books and a stack of books"] * 2)
@@ -187,7 +187,7 @@ class TestPipelines(unittest.TestCase):
         Test batch objects via API
         """
 
-        path = Utils.PATH + "/books.jpg"
+        path = f"{Utils.PATH}/books.jpg"
 
         objects = self.client.post("batchobjects", json=[path, path]).json()
         self.assertEqual([o[0][0] for o in objects], ["book"] * 2)
@@ -264,7 +264,7 @@ class TestPipelines(unittest.TestCase):
         Test batch tabular via API
         """
 
-        path = Utils.PATH + "/tabular.csv"
+        path = f"{Utils.PATH}/tabular.csv"
 
         results = self.client.post("batchtabular", json=[path, path]).json()
         self.assertEqual((len(results[0]), len(results[1])), (6, 6))
@@ -284,7 +284,7 @@ class TestPipelines(unittest.TestCase):
         Test batch textractor via API
         """
 
-        path = Utils.PATH + "/article.pdf"
+        path = f"{Utils.PATH}/article.pdf"
 
         texts = self.client.post("batchtextract", json=[path, path]).json()
         self.assertEqual((len(texts[0]), len(texts[1])), (2301, 2301))
@@ -304,7 +304,7 @@ class TestPipelines(unittest.TestCase):
         Test batch transcribe via API
         """
 
-        path = Utils.PATH + "/Make_huge_profits.wav"
+        path = f"{Utils.PATH}/Make_huge_profits.wav"
 
         texts = self.client.post("batchtranscribe", json=[path, path]).json()
         self.assertEqual(texts, ["Make huge profits without working make up to one hundred thousand dollars a day"] * 2)

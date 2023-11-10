@@ -92,10 +92,7 @@ class API(Application):
             ids deleted
         """
 
-        if self.cluster:
-            return self.cluster.delete(ids)
-
-        return super().delete(ids)
+        return self.cluster.delete(ids) if self.cluster else super().delete(ids)
 
     def reindex(self, config, function=None):
         """
@@ -119,10 +116,7 @@ class API(Application):
             number of elements in embeddings index
         """
 
-        if self.cluster:
-            return self.cluster.count()
-
-        return super().count()
+        return self.cluster.count() if self.cluster else super().count()
 
     def limit(self, limit):
         """

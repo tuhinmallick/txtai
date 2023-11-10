@@ -62,7 +62,9 @@ class Texts(Data):
         if length >= self.maxlength:
             length = (length // self.maxlength) * self.maxlength
 
-        # Split into chunks of maxlength
-        result = {k: [v[x : x + self.maxlength] for x in range(0, length, self.maxlength)] for k, v in concat.items()}
-
-        return result
+        return {
+            k: [
+                v[x : x + self.maxlength] for x in range(0, length, self.maxlength)
+            ]
+            for k, v in concat.items()
+        }

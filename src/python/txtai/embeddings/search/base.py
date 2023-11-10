@@ -126,11 +126,11 @@ class Search:
             return results
 
         # Raise an error if when no indexes are available
-        if not sparse and not dense:
+        if sparse or dense:
+            # Return single query results
+            return dense if dense else sparse
+        else:
             raise IndexNotFoundError("No indexes available")
-
-        # Return single query results
-        return dense if dense else sparse
 
     def subindex(self, queries, limit, weights, index):
         """

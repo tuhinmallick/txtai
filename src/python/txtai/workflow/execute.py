@@ -50,8 +50,7 @@ class Execute:
 
         # Concurrent processing
         if method and len(args) > 1:
-            pool = self.pool(method)
-            if pool:
+            if pool := self.pool(method):
                 return pool.starmap(function, args, 1)
 
         # Sequential processing

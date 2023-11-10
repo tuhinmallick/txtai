@@ -172,7 +172,7 @@ class SQL:
         if name in positions:
             # Find the next clause token
             end = [positions.get(x, len(tokens)) for x in SQL.CLAUSES[SQL.CLAUSES.index(name) + 1 :]]
-            end = min(end) if end else len(tokens)
+            end = min(end, default=len(tokens))
 
             # Start after current clause token and end before next clause or end of string
             clause = tokens[positions[name] + offset : end]

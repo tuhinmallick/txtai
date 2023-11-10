@@ -68,13 +68,10 @@ class NumPy(ANN):
         # Get topn ids
         ids = self.argsort(-scores)[:, :limit]
 
-        # Map results to [(id, score)]
-        results = []
-        for x, score in enumerate(scores):
-            # Add results
-            results.append(list(zip(ids[x].tolist(), score[ids[x]].tolist())))
-
-        return results
+        return [
+            list(zip(ids[x].tolist(), score[ids[x]].tolist()))
+            for x, score in enumerate(scores)
+        ]
 
     def count(self):
         # Get count of non-zero rows (ignores deleted rows)

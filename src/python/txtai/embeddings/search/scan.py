@@ -59,11 +59,11 @@ class Scan:
             if not candidates and not default:
                 default = self.default(queries)
 
-            candidates = max(candidates) if candidates else default
+            candidates = max(candidates, default=default)
 
             # Query weights to pass to batch search
             weights = [query.weights for query in iqueries if query.weights is not None]
-            weights = max(weights) if weights else self.weights
+            weights = max(weights, default=self.weights)
 
             # Index to run query against
             index = index if index else self.index

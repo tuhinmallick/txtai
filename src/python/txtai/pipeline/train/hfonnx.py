@@ -71,12 +71,12 @@ class HFOnnx(Tensors):
             dynamic_axes=dict(chain(inputs.items(), outputs.items())),
         )
 
-        # Quantize model
         if quantize:
-            if not ONNX_RUNTIME:
-                raise ImportError('onnxruntime is not available - install "pipeline" extra to enable')
+            if ONNX_RUNTIME:
+                output = self.quantization(output)
 
-            output = self.quantization(output)
+            else:
+                raise ImportError('onnxruntime is not available - install "pipeline" extra to enable')
 
         if isinstance(output, BytesIO):
             # Reset stream and return bytes

@@ -225,9 +225,7 @@ class Extractor(Pipeline):
         segments, tokenlist = [], []
         if texts:
             for text in texts:
-                # Run tokenizer method, if available, otherwise returns original text
-                tokens = self.tokenize(text)
-                if tokens:
+                if tokens := self.tokenize(text):
                     segments.append(text)
                     tokenlist.append(tokens)
 

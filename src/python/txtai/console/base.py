@@ -164,7 +164,7 @@ class Console(Cmd):
             columns = dict(result)
 
         # Add columns to table
-        columns = list(x for x in columns if x != "tokens")
+        columns = [x for x in columns if x != "tokens"]
         for column in columns:
             table.add_column(column)
 
@@ -252,13 +252,8 @@ class Console(Cmd):
                 mscore = max(score for _, score, _ in spans)
                 spans = [(token, score, f"b {self.vhighlight}" if score == mscore else color) for token, score, color in spans]
 
-            output = ""
-            for token, _, color in spans:
-                if color:
-                    output += f"[{color}]{token}[/{color}] "
-                else:
-                    output += f"{token} "
-
-            return output
-
+            return "".join(
+                f"[{color}]{token}[/{color}] " if color else f"{token} "
+                for token, _, color in spans
+            )
         return str(value)

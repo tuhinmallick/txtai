@@ -80,37 +80,38 @@ class RDBMS(Database):
             self.cursor.execute(Statement.DELETE_SECTIONS)
 
     def reindex(self, config):
-        if self.connection:
-            # Set new configuration
-            self.configure(config)
+        if not self.connection:
+            return
+        # Set new configuration
+        self.configure(config)
 
-            # Resolve text column
-            select = self.resolve(self.text)
+        # Resolve text column
+        select = self.resolve(self.text)
 
-            # Initialize reindex operation
-            name = self.reindexstart()
+        # Initialize reindex operation
+        name = self.reindexstart()
 
-            # Copy data over
-            self.cursor.execute(Statement.COPY_SECTIONS % (name, select))
+        # Copy data over
+        self.cursor.execute(Statement.COPY_SECTIONS % (name, select))
 
-            # Stream new results
-            self.cursor.execute(Statement.STREAM_SECTIONS % name)
-            for uid, text, data, obj, tags in self.rows():
-                if not text and self.encoder and obj:
-                    yield (uid, self.encoder.decode(obj), tags)
-                else:
-                    # Read JSON data, if provided
-                    data = json.loads(data) if data and isinstance(data, str) else data
+        # Stream new results
+        self.cursor.execute(Statement.STREAM_SECTIONS % name)
+        for uid, text, data, obj, tags in self.rows():
+            if not text and self.encoder and obj:
+                yield (uid, self.encoder.decode(obj), tags)
+            else:
+                # Read JSON data, if provided
+                data = json.loads(data) if data and isinstance(data, str) else data
 
-                    # Stream data if available, otherwise use section text
-                    yield (uid, data if data else text, tags)
+                # Stream data if available, otherwise use section text
+                yield (uid, data if data else text, tags)
 
-            # Swap as new table
-            self.cursor.execute(Statement.DROP_SECTIONS)
-            self.cursor.execute(Statement.RENAME_SECTIONS % name)
+        # Swap as new table
+        self.cursor.execute(Statement.DROP_SECTIONS)
+        self.cursor.execute(Statement.RENAME_SECTIONS % name)
 
-            # Finish reindex operation
-            self.reindexend(name)
+        # Finish reindex operation
+        self.reindexend(name)
 
     def save(self, path):
         if self.connection:
@@ -136,17 +137,10 @@ class RDBMS(Database):
     def resolve(self, name, alias=None):
         # Standard column names
         sections = ["indexid", "id", "tags", "entry"]
-        noprefix = ["data", "object", "score", "text"]
-
         # Alias expression
         if alias:
             # Skip if name matches alias or alias is a standard column name
-            if name == alias or alias in sections:
-                return name
-
-            # Build alias clause
-            return f'{name} as "{alias}"'
-
+            return name if name == alias or alias in sections else f'{name} as "{alias}"'
         # Resolve expression
         if self.expressions and name in self.expressions:
             return self.expressions[name]
@@ -155,16 +149,13 @@ class RDBMS(Database):
         if name.startswith(self.jsonprefix()) or any(f"s.{s}" == name for s in sections):
             return name
 
-        # Standard columns - need prefixes
         if name.lower() in sections:
             return f"s.{name}"
 
-        # Standard columns - no prefixes
-        if name.lower() in noprefix:
-            return name
+        noprefix = ["data", "object", "score", "text"]
 
-        # Other columns come from documents.data JSON
-        return self.jsoncolumn(name)
+        # Standard columns - no prefixes
+        return name if name.lower() in noprefix else self.jsoncolumn(name)
 
     def embed(self, similarity, batch):
         # Load similarity results id batch

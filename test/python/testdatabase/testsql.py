@@ -124,9 +124,13 @@ class TestSQL(unittest.TestCase):
 
         prefix = "select count(*), flag from txtai "
 
-        self.assertSql("groupby", prefix + "group by text", "text")
-        self.assertSql("groupby", prefix + "group by distinct(a)", "distinct(json_extract(data, '$.a'))")
-        self.assertSql("groupby", prefix + "where a > 1 group by text", "text")
+        self.assertSql("groupby", f"{prefix}group by text", "text")
+        self.assertSql(
+            "groupby",
+            f"{prefix}group by distinct(a)",
+            "distinct(json_extract(data, '$.a'))",
+        )
+        self.assertSql("groupby", f"{prefix}where a > 1 group by text", "text")
 
     def testHaving(self):
         """
@@ -135,8 +139,14 @@ class TestSQL(unittest.TestCase):
 
         prefix = "select count(*), flag from txtai "
 
-        self.assertSql("having", prefix + "group by text having count(*) > 1", "count(*) > 1")
-        self.assertSql("having", prefix + "where flag = 1 group by text having count(*) > 1", "count(*) > 1")
+        self.assertSql(
+            "having", f"{prefix}group by text having count(*) > 1", "count(*) > 1"
+        )
+        self.assertSql(
+            "having",
+            f"{prefix}where flag = 1 group by text having count(*) > 1",
+            "count(*) > 1",
+        )
 
     def testIsSQL(self):
         """
@@ -153,7 +163,7 @@ class TestSQL(unittest.TestCase):
 
         prefix = "select count(*) from txtai "
 
-        self.assertSql("limit", prefix + "limit 100", "100")
+        self.assertSql("limit", f"{prefix}limit 100", "100")
 
     def testOffset(self):
         """
@@ -162,8 +172,8 @@ class TestSQL(unittest.TestCase):
 
         prefix = "select count(*) from txtai "
 
-        self.assertSql("offset", prefix + "limit 100 offset 50", "50")
-        self.assertSql("offset", prefix + "offset 50", "50")
+        self.assertSql("offset", f"{prefix}limit 100 offset 50", "50")
+        self.assertSql("offset", f"{prefix}offset 50", "50")
 
     def testOrderby(self):
         """
@@ -172,11 +182,13 @@ class TestSQL(unittest.TestCase):
 
         prefix = "select * from txtai "
 
-        self.assertSql("orderby", prefix + "order by id", "s.id")
-        self.assertSql("orderby", prefix + "order by id, text", "s.id, text")
-        self.assertSql("orderby", prefix + "order by id asc", "s.id asc")
-        self.assertSql("orderby", prefix + "order by id desc", "s.id desc")
-        self.assertSql("orderby", prefix + "order by id asc, text desc", "s.id asc, text desc")
+        self.assertSql("orderby", f"{prefix}order by id", "s.id")
+        self.assertSql("orderby", f"{prefix}order by id, text", "s.id, text")
+        self.assertSql("orderby", f"{prefix}order by id asc", "s.id asc")
+        self.assertSql("orderby", f"{prefix}order by id desc", "s.id desc")
+        self.assertSql(
+            "orderby", f"{prefix}order by id asc, text desc", "s.id asc, text desc"
+        )
 
     def testSelectBasic(self):
         """
@@ -218,23 +230,53 @@ class TestSQL(unittest.TestCase):
 
         prefix = "select * from txtai "
 
-        self.assertSql("where", prefix + "where similar('abc')", "__SIMILAR__0")
-        self.assertSql("similar", prefix + "where similar('abc')", [["abc"]])
+        self.assertSql("where", f"{prefix}where similar('abc')", "__SIMILAR__0")
+        self.assertSql("similar", f"{prefix}where similar('abc')", [["abc"]])
 
-        self.assertSql("where", prefix + "where similar('abc') AND id = 1", "__SIMILAR__0 AND s.id = 1")
-        self.assertSql("similar", prefix + "where similar('abc')", [["abc"]])
+        self.assertSql(
+            "where",
+            f"{prefix}where similar('abc') AND id = 1",
+            "__SIMILAR__0 AND s.id = 1",
+        )
+        self.assertSql("similar", f"{prefix}where similar('abc')", [["abc"]])
 
-        self.assertSql("where", prefix + "where similar('abc') and similar('def')", "__SIMILAR__0 and __SIMILAR__1")
-        self.assertSql("similar", prefix + "where similar('abc') and similar('def')", [["abc"], ["def"]])
+        self.assertSql(
+            "where",
+            f"{prefix}where similar('abc') and similar('def')",
+            "__SIMILAR__0 and __SIMILAR__1",
+        )
+        self.assertSql(
+            "similar",
+            f"{prefix}where similar('abc') and similar('def')",
+            [["abc"], ["def"]],
+        )
 
-        self.assertSql("where", prefix + "where similar('abc', 1000)", "__SIMILAR__0")
-        self.assertSql("similar", prefix + "where similar('abc', 1000)", [["abc", "1000"]])
+        self.assertSql("where", f"{prefix}where similar('abc', 1000)", "__SIMILAR__0")
+        self.assertSql(
+            "similar", f"{prefix}where similar('abc', 1000)", [["abc", "1000"]]
+        )
 
-        self.assertSql("where", prefix + "where similar('abc', 1000) and similar('def', 10)", "__SIMILAR__0 and __SIMILAR__1")
-        self.assertSql("similar", prefix + "where similar('abc', 1000) and similar('def', 10)", [["abc", "1000"], ["def", "10"]])
+        self.assertSql(
+            "where",
+            f"{prefix}where similar('abc', 1000) and similar('def', 10)",
+            "__SIMILAR__0 and __SIMILAR__1",
+        )
+        self.assertSql(
+            "similar",
+            f"{prefix}where similar('abc', 1000) and similar('def', 10)",
+            [["abc", "1000"], ["def", "10"]],
+        )
 
-        self.assertSql("where", prefix + "where coalesce(similar('abc'), similar('abc'))", "coalesce(__SIMILAR__0, __SIMILAR__1)")
-        self.assertSql("similar", prefix + "where coalesce(similar('abc'), similar('abc'))", [["abc"], ["abc"]])
+        self.assertSql(
+            "where",
+            f"{prefix}where coalesce(similar('abc'), similar('abc'))",
+            "coalesce(__SIMILAR__0, __SIMILAR__1)",
+        )
+        self.assertSql(
+            "similar",
+            f"{prefix}where coalesce(similar('abc'), similar('abc'))",
+            [["abc"], ["abc"]],
+        )
 
     def testUpper(self):
         """
@@ -251,16 +293,48 @@ class TestSQL(unittest.TestCase):
 
         prefix = "select * from txtai "
 
-        self.assertSql("where", prefix + "where a = b", "json_extract(data, '$.a') = json_extract(data, '$.b')")
-        self.assertSql("where", prefix + "where abc = def", "json_extract(data, '$.abc') = json_extract(data, '$.def')")
-        self.assertSql("where", prefix + "where a = b.value", "json_extract(data, '$.a') = json_extract(data, '$.b.value')")
-        self.assertSql("where", prefix + "where a = 1", "json_extract(data, '$.a') = 1")
-        self.assertSql("where", prefix + "WHERE 1 = a", "1 = json_extract(data, '$.a')")
-        self.assertSql("where", prefix + "WHERE a LIKE 'abc'", "json_extract(data, '$.a') LIKE 'abc'")
-        self.assertSql("where", prefix + "WHERE a NOT LIKE 'abc'", "json_extract(data, '$.a') NOT LIKE 'abc'")
-        self.assertSql("where", prefix + "WHERE a IN (1, 2, 3, b)", "json_extract(data, '$.a') IN (1, 2, 3, json_extract(data, '$.b'))")
-        self.assertSql("where", prefix + "WHERE a is not null", "json_extract(data, '$.a') is not null")
-        self.assertSql("where", prefix + "WHERE score >= 0.15", "score >= 0.15")
+        self.assertSql(
+            "where",
+            f"{prefix}where a = b",
+            "json_extract(data, '$.a') = json_extract(data, '$.b')",
+        )
+        self.assertSql(
+            "where",
+            f"{prefix}where abc = def",
+            "json_extract(data, '$.abc') = json_extract(data, '$.def')",
+        )
+        self.assertSql(
+            "where",
+            f"{prefix}where a = b.value",
+            "json_extract(data, '$.a') = json_extract(data, '$.b.value')",
+        )
+        self.assertSql(
+            "where", f"{prefix}where a = 1", "json_extract(data, '$.a') = 1"
+        )
+        self.assertSql(
+            "where", f"{prefix}WHERE 1 = a", "1 = json_extract(data, '$.a')"
+        )
+        self.assertSql(
+            "where",
+            f"{prefix}WHERE a LIKE 'abc'",
+            "json_extract(data, '$.a') LIKE 'abc'",
+        )
+        self.assertSql(
+            "where",
+            f"{prefix}WHERE a NOT LIKE 'abc'",
+            "json_extract(data, '$.a') NOT LIKE 'abc'",
+        )
+        self.assertSql(
+            "where",
+            f"{prefix}WHERE a IN (1, 2, 3, b)",
+            "json_extract(data, '$.a') IN (1, 2, 3, json_extract(data, '$.b'))",
+        )
+        self.assertSql(
+            "where",
+            f"{prefix}WHERE a is not null",
+            "json_extract(data, '$.a') is not null",
+        )
+        self.assertSql("where", f"{prefix}WHERE score >= 0.15", "score >= 0.15")
 
     def testWhereCompound(self):
         """
@@ -269,19 +343,33 @@ class TestSQL(unittest.TestCase):
 
         prefix = "select * from txtai "
 
-        self.assertSql("where", prefix + "where a > (b + 1)", "json_extract(data, '$.a') > (json_extract(data, '$.b') + 1)")
-        self.assertSql("where", prefix + "where a > func('abc')", "json_extract(data, '$.a') > func('abc')")
         self.assertSql(
-            "where", prefix + "where (id = 1 or id = 2) and a like 'abc'", "(s.id = 1 or s.id = 2) and json_extract(data, '$.a') like 'abc'"
+            "where",
+            f"{prefix}where a > (b + 1)",
+            "json_extract(data, '$.a') > (json_extract(data, '$.b') + 1)",
         )
         self.assertSql(
             "where",
-            prefix + "where a > f(d(b, c, 1),1)",
+            f"{prefix}where a > func('abc')",
+            "json_extract(data, '$.a') > func('abc')",
+        )
+        self.assertSql(
+            "where",
+            f"{prefix}where (id = 1 or id = 2) and a like 'abc'",
+            "(s.id = 1 or s.id = 2) and json_extract(data, '$.a') like 'abc'",
+        )
+        self.assertSql(
+            "where",
+            f"{prefix}where a > f(d(b, c, 1),1)",
             "json_extract(data, '$.a') > f(d(json_extract(data, '$.b'), json_extract(data, '$.c'), 1), 1)",
         )
-        self.assertSql("where", prefix + "where (id = 1 AND id = 2) OR indexid = 3", "(s.id = 1 AND s.id = 2) OR s.indexid = 3")
-        self.assertSql("where", prefix + "where f(id) = b(id)", "f(s.id) = b(s.id)")
-        self.assertSql("where", prefix + "WHERE f(id)", "f(s.id)")
+        self.assertSql(
+            "where",
+            f"{prefix}where (id = 1 AND id = 2) OR indexid = 3",
+            "(s.id = 1 AND s.id = 2) OR s.indexid = 3",
+        )
+        self.assertSql("where", f"{prefix}where f(id) = b(id)", "f(s.id) = b(s.id)")
+        self.assertSql("where", f"{prefix}WHERE f(id)", "f(s.id)")
 
     def assertSql(self, clause, query, expected):
         """

@@ -190,7 +190,7 @@ class WordVectors(Vectors):
         logger.info("Building %d dimension model", size)
 
         # Output vectors in vec/txt format
-        with open(path + ".txt", "w", encoding="utf-8") as output:
+        with open(f"{path}.txt", "w", encoding="utf-8") as output:
             words = model.get_words()
             output.write(f"{len(words)} {model.get_dimension()}\n")
 
@@ -198,12 +198,9 @@ class WordVectors(Vectors):
                 # Skip end of line token
                 if word != "</s>":
                     vector = model.get_word_vector(word)
-                    data = ""
-                    for v in vector:
-                        data += " " + str(v)
-
+                    data = "".join(f" {str(v)}" for v in vector)
                     output.write(word + data + "\n")
 
         # Build magnitude vectors database
         logger.info("Converting vectors to magnitude format")
-        converter.convert(path + ".txt", path + ".magnitude", subword=True)
+        converter.convert(f"{path}.txt", f"{path}.magnitude", subword=True)

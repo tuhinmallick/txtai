@@ -121,7 +121,10 @@ class TestWorkflow(unittest.TestCase):
         # Complex workflow that extracts text, runs summarization then loads into an embeddings index
         tasks = [WorkflowTask(articles, r".\.pdf$"), Task(index, unpack=False)]
 
-        data = ["file://" + Utils.PATH + "/article.pdf", "Workflows can process audio files, documents and snippets"]
+        data = [
+            f"file://{Utils.PATH}/article.pdf",
+            "Workflows can process audio files, documents and snippets",
+        ]
 
         # Convert file paths to data tuples
         data = [(x, element, None) for x, element in enumerate(data)]
@@ -224,7 +227,7 @@ class TestWorkflow(unittest.TestCase):
 
         workflow = Workflow([ImageTask()])
 
-        results = list(workflow([Utils.PATH + "/books.jpg"]))
+        results = list(workflow([f"{Utils.PATH}/books.jpg"]))
 
         self.assertEqual(results[0].size, (1024, 682))
 
@@ -322,17 +325,17 @@ class TestWorkflow(unittest.TestCase):
 
         # Test retrieve with generated temporary directory
         workflow = Workflow([RetrieveTask()])
-        results = list(workflow(["file://" + Utils.PATH + "/books.jpg"]))
+        results = list(workflow([f"file://{Utils.PATH}/books.jpg"]))
         self.assertTrue(results[0].endswith("books.jpg"))
 
         # Test retrieve with specified temporary directory
         workflow = Workflow([RetrieveTask(directory=os.path.join(tempfile.gettempdir(), "retrieve"))])
-        results = list(workflow(["file://" + Utils.PATH + "/books.jpg"]))
+        results = list(workflow([f"file://{Utils.PATH}/books.jpg"]))
         self.assertTrue(results[0].endswith("books.jpg"))
 
         # Test with directory structures
         workflow = Workflow([RetrieveTask(flatten=False)])
-        results = list(workflow(["file://" + Utils.PATH + "/books.jpg"]))
+        results = list(workflow([f"file://{Utils.PATH}/books.jpg"]))
         self.assertTrue(results[0].endswith("books.jpg") and "txtai" in results[0])
 
     def testScheduleWorkflow(self):
@@ -390,7 +393,7 @@ class TestWorkflow(unittest.TestCase):
 
         workflow = Workflow([StorageTask()])
 
-        results = list(workflow(["local://" + Utils.PATH, "test string"]))
+        results = list(workflow([f"local://{Utils.PATH}", "test string"]))
 
         self.assertEqual(len(results), 19)
 

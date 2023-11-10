@@ -143,16 +143,13 @@ class Application:
             + "Links to the Open Library pages and covers are shown in the application."
         )
 
-        query = st.text_input("Search query:")
-        if query:
+        if query := st.text_input("Search query:"):
             ids = [uid for uid, score in embeddings.search(query, 10) if score >= 0.5]
 
             results = []
             for uid in ids:
                 cur.execute("SELECT Title, Description, Cover FROM books WHERE Id=?", (uid,))
-                result = cur.fetchone()
-
-                if result:
+                if result := cur.fetchone():
                     # Build cover image
                     cover = (
                         f"<img src='http://covers.openlibrary.org/b/id/{result[2]}-M.jpg'/>"

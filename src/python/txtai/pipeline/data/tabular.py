@@ -133,8 +133,7 @@ class Tabular(Pipeline):
 
         parts = []
         for column in columns:
-            column = self.column(row[column])
-            if column:
+            if column := self.column(row[column]):
                 parts.append(str(column))
 
         return ". ".join(parts) if parts else None

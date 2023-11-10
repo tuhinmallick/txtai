@@ -28,7 +28,7 @@ class TestTranscription(unittest.TestCase):
         transcribe = Transcription()
 
         # Read audio data
-        raw, samplerate = sf.read(Utils.PATH + "/Make_huge_profits.wav")
+        raw, samplerate = sf.read(f"{Utils.PATH}/Make_huge_profits.wav")
 
         self.assertEqual(transcribe((raw, samplerate)), "Make huge profits without working make up to one hundred thousand dollars a day")
         self.assertEqual(transcribe(raw, samplerate), "Make huge profits without working make up to one hundred thousand dollars a day")
@@ -40,7 +40,7 @@ class TestTranscription(unittest.TestCase):
 
         transcribe = Transcription()
 
-        result = transcribe(Utils.PATH + "/Make_huge_profits.wav", join=False)[0]
+        result = transcribe(f"{Utils.PATH}/Make_huge_profits.wav", join=False)[0]
 
         self.assertIsInstance(result["raw"], np.ndarray)
         self.assertIsNotNone(result["rate"])
@@ -54,7 +54,8 @@ class TestTranscription(unittest.TestCase):
         transcribe = Transcription()
 
         self.assertEqual(
-            transcribe(Utils.PATH + "/Make_huge_profits.wav"), "Make huge profits without working make up to one hundred thousand dollars a day"
+            transcribe(f"{Utils.PATH}/Make_huge_profits.wav"),
+            "Make huge profits without working make up to one hundred thousand dollars a day",
         )
 
     def testResample(self):
@@ -65,7 +66,7 @@ class TestTranscription(unittest.TestCase):
         transcribe = Transcription()
 
         # Read audio data
-        raw, samplerate = sf.read(Utils.PATH + "/Make_huge_profits.wav")
+        raw, samplerate = sf.read(f"{Utils.PATH}/Make_huge_profits.wav")
 
         # Resample for testing
         samples = round(len(raw) * float(22050) / samplerate)
@@ -81,7 +82,7 @@ class TestTranscription(unittest.TestCase):
         transcribe = Transcription()
 
         # Read audio data
-        raw, samplerate = sf.read(Utils.PATH + "/Make_huge_profits.wav")
+        raw, samplerate = sf.read(f"{Utils.PATH}/Make_huge_profits.wav")
 
         # Convert mono to stereo
         raw = np.column_stack((raw, raw))

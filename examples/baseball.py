@@ -157,7 +157,7 @@ class Stats:
             # Get years active, best year, along with metric trends
             return metrics["yearID"].tolist(), best, metrics
 
-        return range(1871, datetime.datetime.today().year), 1950, None
+        return range(1871, datetime.datetime.now().year), 1950, None
 
     def search(self, name=None, year=None, row=None, limit=10):
         """
@@ -505,10 +505,12 @@ class Application:
                 stats, columns = self.pitching, self.pitching.columns[:-2]
 
             # Enter stats with data editor
-            inputs = st.data_editor(pd.DataFrame([dict((column, None) for column in columns)]), hide_index=True).astype(float)
+            inputs = st.data_editor(
+                pd.DataFrame([{column: None for column in columns}]),
+                hide_index=True,
+            ).astype(float)
 
-            submitted = st.form_submit_button("Search")
-            if submitted:
+            if submitted := st.form_submit_button("Search"):
                 # Run search
                 results = stats.search(row=inputs.to_dict(orient="records")[0])
 

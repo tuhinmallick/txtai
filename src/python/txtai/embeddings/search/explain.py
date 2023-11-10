@@ -59,12 +59,13 @@ class Explain:
 
         # Calculate similarity scores per query if texts present
         if texts:
-            results = []
-            for scores in self.embeddings.batchsimilarity(queries, texts):
-                results.append([{"id": uid, "text": texts[uid], "score": score} for uid, score in scores])
-
-            return results
-
+            return [
+                [
+                    {"id": uid, "text": texts[uid], "score": score}
+                    for uid, score in scores
+                ]
+                for scores in self.embeddings.batchsimilarity(queries, texts)
+            ]
         # Query for results if texts is None and content is enabled
         return self.embeddings.batchsearch(queries, limit) if self.content else [[]] * len(queries)
 

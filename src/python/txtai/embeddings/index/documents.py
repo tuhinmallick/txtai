@@ -42,10 +42,7 @@ class Documents:
         with open(self.documents.name, "rb") as queue:
             # Read each batch
             for _ in range(self.batch):
-                documents = pickle.load(queue)
-
-                # Yield each document
-                yield from documents
+                yield from pickle.load(queue)
 
     def add(self, documents):
         """

@@ -98,12 +98,14 @@ class Transcription(HFPipeline):
             list of transcribed text
         """
 
-        results = []
-        for result in self.pipeline([self.convert(*x) for x in speech], chunk_length_s=chunk, ignore_warning=True):
-            # Store result
-            results.append(self.clean(result["text"]))
-
-        return results
+        return [
+            self.clean(result["text"])
+            for result in self.pipeline(
+                [self.convert(*x) for x in speech],
+                chunk_length_s=chunk,
+                ignore_warning=True,
+            )
+        ]
 
     def batchprocess(self, speech, chunk):
         """
@@ -126,11 +128,16 @@ class Transcription(HFPipeline):
             # Get segments for current speech entry
             segments = self.segments(raw, rate, chunk)
 
-            # Process segments, store raw data before processing given pipeline modifies it
-            sresults = []
-            for x, result in enumerate(self.pipeline([self.convert(*x) for x in segments])):
-                sresults.append({"text": self.clean(result["text"]), "raw": segments[x][0], "rate": segments[x][1]})
-
+            sresults = [
+                {
+                    "text": self.clean(result["text"]),
+                    "raw": segments[x][0],
+                    "rate": segments[x][1],
+                }
+                for x, result in enumerate(
+                    self.pipeline([self.convert(*x) for x in segments])
+                )
+            ]
             results.append(sresults)
 
         return results
@@ -145,13 +152,7 @@ class Transcription(HFPipeline):
             chunk: chunk duration size
         """
 
-        segments = []
-
-        # Split into batches, use sample rate * chunk seconds
-        for segment in self.batch(raw, rate * chunk):
-            segments.append((segment, rate))
-
-        return segments
+        return [(segment, rate) for segment in self.batch(raw, rate * chunk)]
 
     def convert(self, raw, rate):
         """

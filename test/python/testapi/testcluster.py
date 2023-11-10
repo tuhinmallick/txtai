@@ -44,11 +44,10 @@ class RequestHandler(BaseHTTPRequestHandler):
                 response = [{"count(*)": 12, "text": "This is a test"}, {"count(*)": 14, "text": "And another test"}]
             elif "group+by+txt" in self.path:
                 response = [{"count(*)": 12, "txt": "This is a test"}, {"count(*)": 14, "txt": "And another test"}]
+            elif self.server.server_port == 8002:
+                response = [{"count(*)": 12, "min(indexid)": 0, "max(indexid)": 11, "avg(indexid)": 6.3}]
             else:
-                if self.server.server_port == 8002:
-                    response = [{"count(*)": 12, "min(indexid)": 0, "max(indexid)": 11, "avg(indexid)": 6.3}]
-                else:
-                    response = [{"count(*)": 16, "min(indexid)": 2, "max(indexid)": 14, "avg(indexid)": 6.7}]
+                response = [{"count(*)": 16, "min(indexid)": 2, "max(indexid)": 14, "avg(indexid)": 6.7}]
         elif self.path.startswith("/search"):
             response = [{"id": 4, "score": 0.40}]
         else:
@@ -73,10 +72,7 @@ class RequestHandler(BaseHTTPRequestHandler):
         if self.path.startswith("/batchsearch"):
             response = [[{"id": 4, "score": 0.40}], [{"id": 1, "score": 0.40}]]
         elif self.path.startswith("/delete"):
-            if self.server.server_port == 8002:
-                response = [0]
-            else:
-                response = []
+            response = [0] if self.server.server_port == 8002 else []
         else:
             response = {"result": "ok"}
 

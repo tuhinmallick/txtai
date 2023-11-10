@@ -29,9 +29,10 @@ class TestEncoder(unittest.TestCase):
         """
 
         cls.data = []
-        for path in glob.glob(Utils.PATH + "/*jpg"):
-            cls.data.append((path, {"object": Image.open(path)}, None))
-
+        cls.data.extend(
+            (path, {"object": Image.open(path)}, None)
+            for path in glob.glob(f"{Utils.PATH}/*jpg")
+        )
         # Create embeddings model, backed by sentence-transformers & transformers
         cls.embeddings = Embeddings(
             {"method": "sentence-transformers", "path": "sentence-transformers/clip-ViT-B-32", "content": True, "objects": "image"}

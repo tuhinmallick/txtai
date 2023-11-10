@@ -88,13 +88,12 @@ class Labels(HFPipeline):
                     outputs.append(result[:1] if isinstance(flatten, bool) else result)
                 else:
                     outputs.append([(labels.index(label), result["scores"][x]) for x, label in enumerate(result["labels"])])
+            elif flatten:
+                result = [x["label"] for x in result if x["score"] >= threshold and (not labels or x["label"] in labels)]
+                outputs.append(result[:1] if isinstance(flatten, bool) else result)
             else:
-                if flatten:
-                    result = [x["label"] for x in result if x["score"] >= threshold and (not labels or x["label"] in labels)]
-                    outputs.append(result[:1] if isinstance(flatten, bool) else result)
-                else:
-                    # Filter results using labels, if provided
-                    outputs.append(self.limit(result, labels))
+                # Filter results using labels, if provided
+                outputs.append(self.limit(result, labels))
 
         return outputs
 

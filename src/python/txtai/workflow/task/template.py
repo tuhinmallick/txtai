@@ -35,24 +35,23 @@ class TemplateTask(Task):
         self.formatter = TemplateFormatter() if strict else Formatter()
 
     def prepare(self, element):
-        # Check if element matches any processing rules
-        match = self.match(element)
-        if match:
+        if match := self.match(element):
             return match
 
-        # Apply template processing, if applicable
         if self.template:
-            # Pass dictionary as named prompt template parameters
             if isinstance(element, dict):
                 return self.formatter.format(self.template, **element)
 
-            # Pass tuple as prompt template parameters (arg0 - argN)
-            if isinstance(element, tuple):
-                return self.formatter.format(self.template, **{f"arg{i}": x for i, x in enumerate(element)})
-
-            # Default behavior is to use input as {text} parameter in prompt template
-            return self.formatter.format(self.template, text=element)
-
+            else:
+                        # Pass tuple as prompt template parameters (arg0 - argN)
+                return (
+                    self.formatter.format(
+                        self.template,
+                        **{f"arg{i}": x for i, x in enumerate(element)},
+                    )
+                    if isinstance(element, tuple)
+                    else self.formatter.format(self.template, text=element)
+                )
         # Return original inputs when no prompt provided
         return element
 

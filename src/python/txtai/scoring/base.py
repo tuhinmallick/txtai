@@ -200,8 +200,9 @@ class Scoring:
 
         # Boost weights of tag tokens to match the largest weight in the list
         if self.tags:
-            tags = {token: self.tags[token] for token in tokens if token in self.tags}
-            if tags:
+            if tags := {
+                token: self.tags[token] for token in tokens if token in self.tags
+            }:
                 maxWeight = max(weights)
                 maxTag = max(tags.values())
 
@@ -256,9 +257,7 @@ class Scoring:
         # Run threaded queries
         results = []
         with ThreadPool(threads) as pool:
-            for result in pool.starmap(self.search, [(x, limit) for x in queries]):
-                results.append(result)
-
+            results.extend(iter(pool.starmap(self.search, [(x, limit) for x in queries])))
         return results
 
     def count(self):
@@ -286,7 +285,7 @@ class Scoring:
             # Load terms
             if self.config.get("terms"):
                 self.terms = Terms(self.config["terms"], self.score, self.idf)
-                self.terms.load(path + ".terms")
+                self.terms.load(f"{path}.terms")
 
     def save(self, path):
         """
@@ -306,7 +305,7 @@ class Scoring:
 
             # Save terms
             if self.terms:
-                self.terms.save(path + ".terms")
+                self.terms.save(f"{path}.terms")
 
     def close(self):
         """
@@ -430,11 +429,7 @@ class Scoring:
             return Tokenizer(**self.config.get("tokenizer"))
 
         # Terms index use a standard tokenizer
-        if self.config.get("terms"):
-            return Tokenizer()
-
-        # Standard scoring index without a terms index uses backwards compatible static tokenize method
-        return Tokenizer.tokenize
+        return Tokenizer() if self.config.get("terms") else Tokenizer.tokenize
 
     def results(self, scores):
         """

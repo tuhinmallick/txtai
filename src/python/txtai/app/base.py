@@ -332,12 +332,15 @@ class Application:
             with self.lock:
                 search = self.embeddings.batchsearch(queries, limit, weights, index)
 
-            results = []
-            for result in search:
-                # Unpack (id, score) tuple, if necessary. Otherwise, results are dictionaries.
-                results.append([{"id": r[0], "score": float(r[1])} if isinstance(r, tuple) else r for r in result])
-            return results
-
+            return [
+                [
+                    {"id": r[0], "score": float(r[1])}
+                    if isinstance(r, tuple)
+                    else r
+                    for r in result
+                ]
+                for result in search
+            ]
         return None
 
     def add(self, documents):
@@ -477,10 +480,7 @@ class Application:
             number of elements in embeddings index
         """
 
-        if self.embeddings:
-            return self.embeddings.count()
-
-        return None
+        return self.embeddings.count() if self.embeddings else None
 
     def similarity(self, query, texts):
         """
@@ -653,10 +653,7 @@ class Application:
             pipeline results
         """
 
-        if name in self.pipelines:
-            return self.pipelines[name](*args)
-
-        return None
+        return self.pipelines[name](*args) if name in self.pipelines else None
 
     def workflow(self, name, elements):
         """

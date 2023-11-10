@@ -76,6 +76,8 @@ class TestTrainer(unittest.TestCase):
         Test training a model with a mock pandas DataFrame
         """
 
+
+
         class TestDataFrame:
             """
             Test DataFrame
@@ -85,13 +87,14 @@ class TestTrainer(unittest.TestCase):
                 # Get list of columns
                 self.columns = list(data[0].keys())
 
-                # Build columnar data view
-                self.data = {}
-                for column in self.columns:
-                    self.data[column] = Values([row[column] for row in data])
+                self.data = {
+                    column: Values([row[column] for row in data])
+                    for column in self.columns
+                }
 
             def __getitem__(self, column):
                 return self.data[column]
+
 
         class Values:
             """
@@ -114,6 +117,7 @@ class TestTrainer(unittest.TestCase):
 
                 return set(self.values)
 
+        # Mock DataFrame
         # Mock DataFrame
         df = TestDataFrame(self.data)
 
@@ -200,10 +204,10 @@ class TestTrainer(unittest.TestCase):
         Test training model with labels provided as a list
         """
 
-        data = []
-        for x in self.data:
-            data.append({"text": x["text"], "label": [0.0, 1.0] if x["label"] else [1.0, 0.0]})
-
+        data = [
+            {"text": x["text"], "label": [0.0, 1.0] if x["label"] else [1.0, 0.0]}
+            for x in self.data
+        ]
         trainer = HFTrainer()
         model, tokenizer = trainer("google/bert_uncased_L-2_H-128_A-2", data)
 
@@ -237,10 +241,7 @@ class TestTrainer(unittest.TestCase):
         Test training a model with a regression (continuous) output
         """
 
-        data = []
-        for x in self.data:
-            data.append({"text": x["text"], "label": x["label"] + 0.1})
-
+        data = [{"text": x["text"], "label": x["label"] + 0.1} for x in self.data]
         trainer = HFTrainer()
         model, tokenizer = trainer("google/bert_uncased_L-2_H-128_A-2", data)
 

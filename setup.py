@@ -12,46 +12,46 @@ install = ["faiss-cpu>=1.7.1.post2", "torch>=1.12.1", "transformers>=4.22.0"]
 install += ["huggingface-hub>=0.9.0", "numpy>=1.18.4", "pyyaml>=5.3", "regex>=2022.8.17"]
 
 # Optional dependencies
-extras = {}
-
-# Development dependencies - not included in "all" install
-extras["dev"] = [
-    "black",
-    "coverage",
-    "coveralls",
-    "httpx",
-    "mkdocs-material",
-    "mkdocs-redirects",
-    "mkdocstrings[python-legacy]",
-    "pre-commit",
-    "pylint",
-]
-
-extras["api"] = [
-    "aiohttp>=3.8.1",
-    "fastapi>=0.61.1",
-    "uvicorn>=0.12.1",
-]
-
-extras["cloud"] = ["apache-libcloud>=3.3.1"]
-
-extras["console"] = ["rich>=12.0.1"]
-
-extras["database"] = ["duckdb>=0.7.1", "pillow>=7.1.2", "sqlalchemy>=2.0.20"]
-
-extras["graph"] = ["networkx>=2.6.3", "python-louvain>=0.16"]
-
-extras["model"] = ["onnx>=1.11.0", "onnxruntime>=1.11.0"]
-
-extras["pipeline-audio"] = ["onnx>=1.11.0", "onnxruntime>=1.11.0", "soundfile>=0.10.3.post1", "scipy>=1.4.1", "ttstokenizer>=1.0.0"]
-
-extras["pipeline-data"] = ["beautifulsoup4>=4.9.3", "nltk>=3.5", "pandas>=1.1.0", "tika>=1.24"]
-
-extras["pipeline-image"] = ["imagehash>=4.2.1", "pillow>=7.1.2", "timm>=0.4.12"]
-
-extras["pipeline-text"] = ["fasttext>=0.9.2", "sentencepiece>=0.1.91"]
-
-extras["pipeline-train"] = ["accelerate>=0.19.0", "onnx>=1.11.0", "onnxmltools>=1.9.1", "onnxruntime>=1.11.0"]
+extras = {
+    "dev": [
+        "black",
+        "coverage",
+        "coveralls",
+        "httpx",
+        "mkdocs-material",
+        "mkdocs-redirects",
+        "mkdocstrings[python-legacy]",
+        "pre-commit",
+        "pylint",
+    ],
+    "api": ["aiohttp>=3.8.1", "fastapi>=0.61.1", "uvicorn>=0.12.1"],
+    "cloud": ["apache-libcloud>=3.3.1"],
+    "console": ["rich>=12.0.1"],
+    "database": ["duckdb>=0.7.1", "pillow>=7.1.2", "sqlalchemy>=2.0.20"],
+    "graph": ["networkx>=2.6.3", "python-louvain>=0.16"],
+    "model": ["onnx>=1.11.0", "onnxruntime>=1.11.0"],
+    "pipeline-audio": [
+        "onnx>=1.11.0",
+        "onnxruntime>=1.11.0",
+        "soundfile>=0.10.3.post1",
+        "scipy>=1.4.1",
+        "ttstokenizer>=1.0.0",
+    ],
+    "pipeline-data": [
+        "beautifulsoup4>=4.9.3",
+        "nltk>=3.5",
+        "pandas>=1.1.0",
+        "tika>=1.24",
+    ],
+    "pipeline-image": ["imagehash>=4.2.1", "pillow>=7.1.2", "timm>=0.4.12"],
+    "pipeline-text": ["fasttext>=0.9.2", "sentencepiece>=0.1.91"],
+    "pipeline-train": [
+        "accelerate>=0.19.0",
+        "onnx>=1.11.0",
+        "onnxmltools>=1.9.1",
+        "onnxruntime>=1.11.0",
+    ],
+}
 
 extras["pipeline"] = (
     extras["pipeline-audio"] + extras["pipeline-data"] + extras["pipeline-image"] + extras["pipeline-text"] + extras["pipeline-train"]

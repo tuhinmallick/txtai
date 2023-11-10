@@ -59,7 +59,7 @@ class Application:
             directory: directory with images
         """
 
-        for path in glob.glob(directory + "/*jpg") + glob.glob(directory + "/*png"):
+        for path in glob.glob(f"{directory}/*jpg") + glob.glob(f"{directory}/*png"):
             yield (path, Image.open(path), None)
 
     def run(self):
@@ -76,8 +76,7 @@ class Application:
             + "the same space, enabling image similarity search. txtai can directly utilize these models."
         )
 
-        query = st.text_input("Search query:")
-        if query:
+        if query := st.text_input("Search query:"):
             index, _ = self.embeddings.search(query, 1)[0]
             st.image(Image.open(index))
 

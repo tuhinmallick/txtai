@@ -21,7 +21,7 @@ class TestObjects(unittest.TestCase):
         """
 
         objects = Objects(classification=True, threshold=0.3)
-        self.assertEqual(objects(Utils.PATH + "/books.jpg")[0][0], "library")
+        self.assertEqual(objects(f"{Utils.PATH}/books.jpg")[0][0], "library")
 
     def testDetection(self):
         """
@@ -29,7 +29,7 @@ class TestObjects(unittest.TestCase):
         """
 
         objects = Objects()
-        self.assertEqual(objects(Utils.PATH + "/books.jpg")[0][0], "book")
+        self.assertEqual(objects(f"{Utils.PATH}/books.jpg")[0][0], "book")
 
     def testFlatten(self):
         """
@@ -37,4 +37,4 @@ class TestObjects(unittest.TestCase):
         """
 
         objects = Objects()
-        self.assertEqual(objects(Utils.PATH + "/books.jpg", flatten=True)[0], "book")
+        self.assertEqual(objects(f"{Utils.PATH}/books.jpg", flatten=True)[0], "book")

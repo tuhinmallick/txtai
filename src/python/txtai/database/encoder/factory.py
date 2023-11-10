@@ -44,8 +44,4 @@ class EncoderFactory:
         """
 
         # Return default encoder
-        if encoder is True:
-            return Encoder()
-
-        # Get Encoder instance
-        return EncoderFactory.get(encoder)()
+        return Encoder() if encoder is True else EncoderFactory.get(encoder)()

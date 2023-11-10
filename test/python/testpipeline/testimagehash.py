@@ -23,7 +23,7 @@ class TestImageHash(unittest.TestCase):
         Caches an image to hash
         """
 
-        cls.image = Image.open(Utils.PATH + "/books.jpg")
+        cls.image = Image.open(f"{Utils.PATH}/books.jpg")
 
     def testArray(self):
         """
@@ -71,4 +71,4 @@ class TestImageHash(unittest.TestCase):
         """
 
         ihash = ImageHash("wavelet")
-        self.assertEqual(ihash(Utils.PATH + "/books.jpg"), "68015d85bfbf3f00")
+        self.assertEqual(ihash(f"{Utils.PATH}/books.jpg"), "68015d85bfbf3f00")

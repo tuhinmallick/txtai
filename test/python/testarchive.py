@@ -42,7 +42,7 @@ class TestArchive(unittest.TestCase):
 
         path = os.path.join(tempfile.gettempdir(), "badzip")
         with ZipFile(path, "w", ZIP_DEFLATED) as zfile:
-            zfile.write(Utils.PATH + "/article.pdf", arcname="../article.pdf")
+            zfile.write(f"{Utils.PATH}/article.pdf", arcname="../article.pdf")
 
         archive = ArchiveFactory.create(path)
 

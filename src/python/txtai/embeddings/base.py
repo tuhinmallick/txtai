@@ -217,7 +217,7 @@ class Embeddings:
 
             # Parse out indices and ids to delete
             indices = [i for i, _ in ids]
-            deletes = sorted(set(uid for _, uid in ids))
+            deletes = sorted({uid for _, uid in ids})
 
             # Delete ids from database
             self.database.delete(deletes)
@@ -491,9 +491,7 @@ class Embeddings:
             True if index exists, False otherwise
         """
 
-        # Check if this exists in a cloud instance
-        cloud = self.createcloud(cloud=cloud, **kwargs)
-        if cloud:
+        if cloud := self.createcloud(cloud=cloud, **kwargs):
             return cloud.exists(path)
 
         # Check if this is an archive file and exists
@@ -518,9 +516,7 @@ class Embeddings:
             kwargs: additional configuration as keyword args
         """
 
-        # Load from cloud, if configured
-        cloud = self.createcloud(cloud=cloud, **kwargs)
-        if cloud:
+        if cloud := self.createcloud(cloud=cloud, **kwargs):
             path = cloud.load(path)
 
         # Check if this is an archive file and extract
@@ -578,54 +574,53 @@ class Embeddings:
             kwargs: additional configuration as keyword args
         """
 
-        if self.config:
-            # Check if this is an archive file
-            path, apath = self.checkarchive(path)
+        if not self.config:
+            return
+        # Check if this is an archive file
+        path, apath = self.checkarchive(path)
 
-            # Create output directory, if necessary
-            os.makedirs(path, exist_ok=True)
+        # Create output directory, if necessary
+        os.makedirs(path, exist_ok=True)
 
-            # Copy sentence vectors model
-            if self.config.get("storevectors"):
-                shutil.copyfile(self.config["path"], os.path.join(path, os.path.basename(self.config["path"])))
+        # Copy sentence vectors model
+        if self.config.get("storevectors"):
+            shutil.copyfile(self.config["path"], os.path.join(path, os.path.basename(self.config["path"])))
 
-                self.config["path"] = os.path.basename(self.config["path"])
+            self.config["path"] = os.path.basename(self.config["path"])
 
-            # Save index configuration
-            self.saveconfig(path)
+        # Save index configuration
+        self.saveconfig(path)
 
-            # Save approximate nearest neighbor index
-            if self.ann:
-                self.ann.save(f"{path}/embeddings")
+        # Save approximate nearest neighbor index
+        if self.ann:
+            self.ann.save(f"{path}/embeddings")
 
-            # Save dimensionality reduction model (word vectors only)
-            if self.reducer:
-                self.reducer.save(f"{path}/lsa")
+        # Save dimensionality reduction model (word vectors only)
+        if self.reducer:
+            self.reducer.save(f"{path}/lsa")
 
-            # Save document database
-            if self.database:
-                self.database.save(f"{path}/documents")
+        # Save document database
+        if self.database:
+            self.database.save(f"{path}/documents")
 
-            # Save scoring index
-            if self.scoring:
-                self.scoring.save(f"{path}/scoring")
+        # Save scoring index
+        if self.scoring:
+            self.scoring.save(f"{path}/scoring")
 
-            # Save subindexes
-            if self.indexes:
-                self.indexes.save(f"{path}/indexes")
+        # Save subindexes
+        if self.indexes:
+            self.indexes.save(f"{path}/indexes")
 
-            # Save graph
-            if self.graph:
-                self.graph.save(f"{path}/graph")
+        # Save graph
+        if self.graph:
+            self.graph.save(f"{path}/graph")
 
-            # If this is an archive, save it
-            if apath:
-                self.archive.save(apath)
+        # If this is an archive, save it
+        if apath:
+            self.archive.save(apath)
 
-            # Save to cloud, if configured
-            cloud = self.createcloud(cloud=cloud, **kwargs)
-            if cloud:
-                cloud.save(apath if apath else path)
+        if cloud := self.createcloud(cloud=cloud, **kwargs):
+            cloud.save(apath if apath else path)
 
     def close(self):
         """
@@ -873,10 +868,7 @@ class Embeddings:
             query model
         """
 
-        if "query" in self.config:
-            return Query(**self.config["query"])
-
-        return None
+        return Query(**self.config["query"]) if "query" in self.config else None
 
     def checkarchive(self, path):
         """
@@ -975,11 +967,10 @@ class Embeddings:
 
         # Load subindexes
         if "indexes" in self.config:
-            indexes = {}
-            for index, config in self.config["indexes"].items():
-                # Create index with shared model cache
-                indexes[index] = Embeddings(config, models=self.models)
-
+            indexes = {
+                index: Embeddings(config, models=self.models)
+                for index, config in self.config["indexes"].items()
+            }
             # Wrap as Indexes object
             return Indexes(self, indexes)
 
