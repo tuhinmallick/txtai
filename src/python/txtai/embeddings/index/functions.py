@@ -71,23 +71,22 @@ class Functions:
             function reference
         """
 
-        if isinstance(function, str):
-            parts = function.split(".")
+        if not isinstance(function, str):
+            return function
+        parts = function.split(".")
 
-            if hasattr(self.embeddings, parts[0]):
-                m = Reference(self.embeddings, parts[0])
-                self.references.append(m)
-            else:
-                module = ".".join(parts[:-1])
-                m = __import__(module)
+        if hasattr(self.embeddings, parts[0]):
+            m = Reference(self.embeddings, parts[0])
+            self.references.append(m)
+        else:
+            module = ".".join(parts[:-1])
+            m = __import__(module)
 
-            for comp in parts[1:]:
-                m = Reference(m, comp)
-                self.references.append(m)
+        for comp in parts[1:]:
+            m = Reference(m, comp)
+            self.references.append(m)
 
-            return m
-
-        return function
+        return m
 
 
 class Reference:

@@ -11,6 +11,5 @@ class TemplateFormatter(Formatter):
     """
 
     def check_unused_args(self, used_args, args, kwargs):
-        difference = set(kwargs).difference(used_args)
-        if difference:
+        if difference := set(kwargs).difference(used_args):
             raise KeyError(difference)

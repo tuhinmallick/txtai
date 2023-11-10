@@ -73,8 +73,7 @@ class NetworkX(Graph):
         return self.backend.number_of_edges()
 
     def edges(self, uid):
-        edges = self.backend.adj.get(uid)
-        if edges:
+        if edges := self.backend.adj.get(uid):
             return dict(sorted(edges.items(), key=lambda x: x[1]["weight"]), reverse="True").keys()
 
         return None
@@ -106,13 +105,15 @@ class NetworkX(Graph):
         algorithm = config.get("algorithm")
 
         if algorithm == "greedy":
-            communities = greedy_modularity_communities(self.backend, weight="weight", resolution=config.get("resolution", 100))
+            return greedy_modularity_communities(
+                self.backend,
+                weight="weight",
+                resolution=config.get("resolution", 100),
+            )
         elif algorithm == "lpa":
-            communities = asyn_lpa_communities(self.backend, weight="weight", seed=0)
+            return asyn_lpa_communities(self.backend, weight="weight", seed=0)
         else:
-            communities = self.louvain(config)
-
-        return communities
+            return self.louvain(config)
 
     def loadgraph(self, path):
         # Load graph network

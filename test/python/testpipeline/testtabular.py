@@ -56,7 +56,7 @@ class TestTabular(unittest.TestCase):
         Test parsing a CSV file
         """
 
-        rows = self.tabular([Utils.PATH + "/tabular.csv"])
+        rows = self.tabular([f"{Utils.PATH}/tabular.csv"])
         uid, text, _ = rows[0][0]
 
         self.assertEqual(uid, 0)

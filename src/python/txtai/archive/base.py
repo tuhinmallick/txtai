@@ -76,9 +76,7 @@ class Archive:
             compression: compression format, infers from path if not provided
         """
 
-        # Create output directory, if necessary
-        output = os.path.dirname(path)
-        if output:
+        if output := os.path.dirname(path):
             os.makedirs(output, exist_ok=True)
 
         # Pack into compressed file

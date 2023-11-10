@@ -47,7 +47,7 @@ class TestOptional(unittest.TestCase):
         ]
 
         # Get handle to all currently loaded txtai modules
-        modules = modules + [key for key in sys.modules if key.startswith("txtai")]
+        modules += [key for key in sys.modules if key.startswith("txtai")]
         cls.modules = {module: None for module in modules}
 
         # Replace loaded modules with stubs. Save modules for later reloading

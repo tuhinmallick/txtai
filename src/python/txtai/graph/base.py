@@ -512,9 +512,9 @@ class Graph:
         if "categories" in config and similarity:
             self.categories = []
             results = similarity(self.topics.keys(), config["categories"])
-            for result in results:
-                self.categories.append(config["categories"][result[0][0]])
-
+            self.categories.extend(
+                config["categories"][result[0][0]] for result in results
+            )
         # Add topic-related node attributes
         for x, topic in enumerate(self.topics):
             for r, uid in enumerate(self.topics[topic]):

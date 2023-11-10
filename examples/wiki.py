@@ -37,9 +37,7 @@ class Application:
         st.title("Wikipedia")
         st.markdown("This application queries the Wikipedia API and summarizes the top result.")
 
-        query = st.text_input("Query")
-
-        if query:
+        if query := st.text_input("Query"):
             query = urllib.parse.quote_plus(query)
             data = requests.get(Application.SEARCH_TEMPLATE % query).json()
             if data and data[1]:
@@ -48,7 +46,7 @@ class Application:
                 content = list(content["query"]["pages"].values())[0]["extract"]
 
                 st.write(self.summary(content))
-                st.markdown("*Source: " + data[3][0] + "*")
+                st.markdown(f"*Source: {data[3][0]}*")
             else:
                 st.markdown("*No results found*")
 

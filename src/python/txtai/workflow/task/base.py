@@ -266,25 +266,24 @@ class Task:
             transformed data elements
         """
 
-        if self.action:
-            # Run actions
-            outputs = []
-            for x, action in enumerate(self.action):
-                # Filter elements by column index if necessary - supports a single int or an action index to column index mapping
-                index = self.column[x] if isinstance(self.column, dict) else self.column
-                inputs = [self.extract(e, index) for e in elements] if index is not None else elements
+        if not self.action:
+            return elements
+        # Run actions
+        outputs = []
+        for x, action in enumerate(self.action):
+            # Filter elements by column index if necessary - supports a single int or an action index to column index mapping
+            index = self.column[x] if isinstance(self.column, dict) else self.column
+            inputs = [self.extract(e, index) for e in elements] if index is not None else elements
 
-                # Queue arguments for executor, process immediately if no executor available
-                outputs.append((action, inputs) if executor else self.process(action, inputs))
+            # Queue arguments for executor, process immediately if no executor available
+            outputs.append((action, inputs) if executor else self.process(action, inputs))
 
-            # Run with executor if available
-            if executor:
-                outputs = executor.run(self.concurrency, self.process, outputs)
+        # Run with executor if available
+        if executor:
+            outputs = executor.run(self.concurrency, self.process, outputs)
 
-            # Run post process operations
-            return self.postprocess(outputs)
-
-        return elements
+        # Run post process operations
+        return self.postprocess(outputs)
 
     def extract(self, element, index):
         """
@@ -354,11 +353,7 @@ class Task:
 
         if self.merge == "vstack":
             return self.vstack(outputs)
-        if self.merge == "concat":
-            return self.concat(outputs)
-
-        # Default mode is hstack
-        return self.hstack(outputs)
+        return self.concat(outputs) if self.merge == "concat" else self.hstack(outputs)
 
     def single(self, outputs):
         """

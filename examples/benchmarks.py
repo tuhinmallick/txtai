@@ -263,9 +263,7 @@ class RankBM25(Index):
         else:
             # Tokenize data
             tokenizer, data = Tokenizer(), []
-            for uid, text, _ in self.rows():
-                data.append((uid, tokenizer(text)))
-
+            data.extend((uid, tokenizer(text)) for uid, text, _ in self.rows())
             ids = [uid for uid, _ in data]
             model = BM25Okapi([text for _, text in data])
 
@@ -306,9 +304,7 @@ class SQLiteFTS(Index):
 
             # Tokenize data
             tokenizer, data = Tokenizer(), []
-            for uid, text, _ in self.rows():
-                data.append((uid, " ".join(tokenizer(text))))
-
+            data.extend((uid, " ".join(tokenizer(text))) for uid, text, _ in self.rows())
             # Create table
             connection.execute("CREATE VIRTUAL TABLE textindex using fts5(id, text)")
 
@@ -340,13 +336,10 @@ class Elastic(Index):
         # Run ES query
         response = self.backend.msearch(body=request, request_timeout=600)
 
-        # Read responses
-        results = []
-        for resp in response["responses"]:
-            result = resp["hits"]["hits"]
-            results.append([(r["_id"], r["_score"]) for r in result])
-
-        return results
+        return [
+            [(r["_id"], r["_score"]) for r in resp["hits"]["hits"]]
+            for resp in response["responses"]
+        ]
 
     def index(self):
         es = Elasticsearch("http://localhost:9200")

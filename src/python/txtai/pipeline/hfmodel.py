@@ -69,7 +69,7 @@ class HFModel(Tensors):
         # Pre-process and split on newlines
         batch, positions = [], []
         for x, text in enumerate(texts):
-            elements = [t + " " for t in text.split("\n") if t]
+            elements = [f"{t} " for t in text.split("\n") if t]
             batch.extend(elements)
             positions.extend([x] * len(elements))
 

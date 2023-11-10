@@ -125,8 +125,9 @@ class Aggregate(SQL):
             results grouped using group by clause
         """
 
-        groupby = [column for column in columns if column.lower() in query["groupby"]]
-        if groupby:
+        if groupby := [
+            column for column in columns if column.lower() in query["groupby"]
+        ]:
             results = sorted(results, key=operator.itemgetter(*groupby))
             return [list(value) for _, value in itertools.groupby(results, operator.itemgetter(*groupby))]
 

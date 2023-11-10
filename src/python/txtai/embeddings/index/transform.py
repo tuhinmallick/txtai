@@ -125,11 +125,7 @@ class Transform:
             document ids
         """
 
-        # Consume stream and build extract ids
-        ids = []
-        for uid, _, _ in self.stream(documents):
-            ids.append(uid)
-
+        ids = [uid for uid, _, _ in self.stream(documents)]
         # Save offset when dense indexing is disabled
         self.config["offset"] = self.offset
 
@@ -194,9 +190,7 @@ class Transform:
 
         # Delete from embeddings index first (which deletes from underlying indexes and datastores) if this is an upsert
         if self.action == Action.UPSERT:
-            # Get list of ids not yet seen and deleted
-            deletes = [uid for uid, _, _ in batch if uid not in self.deletes]
-            if deletes:
+            if deletes := [uid for uid, _, _ in batch if uid not in self.deletes]:
                 # Execute delete
                 self.delete(deletes)
 

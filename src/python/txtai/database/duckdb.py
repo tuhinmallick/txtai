@@ -74,10 +74,8 @@ class DuckDB(Embedded):
     def rows(self):
         # Iteratively retrieve and yield rows
         batch = 256
-        rows = self.cursor.fetchmany(batch)
-        while rows:
+        while rows := self.cursor.fetchmany(batch):
             yield from rows
-            rows = self.cursor.fetchmany(batch)
 
     def addfunctions(self):
         # DuckDB doesn't currently support scalar functions
@@ -139,8 +137,7 @@ class DuckDB(Embedded):
             params = []
             for key, value in parameters.items():
                 pattern = rf"\:{key}(?=\s|$)"
-                match = re.search(pattern, query)
-                if match:
+                if match := re.search(pattern, query):
                     query = re.sub(pattern, "?", query, count=1)
                     params.append((match.start(), value))
 

@@ -77,9 +77,7 @@ class HNSW(ANN):
                 continue
 
     def search(self, queries, limit):
-        # Set ef query param
-        ef = self.setting("efsearch")
-        if ef:
+        if ef := self.setting("efsearch"):
             self.backend.set_ef(ef)
 
         # Run the query

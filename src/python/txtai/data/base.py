@@ -54,27 +54,29 @@ class Data:
 
         if hasattr(data, "map"):
             # Hugging Face dataset
-            tokens = data.map(fn, batched=True, num_proc=workers, remove_columns=data.column_names)
+            return data.map(
+                fn,
+                batched=True,
+                num_proc=workers,
+                remove_columns=data.column_names,
+            )
+        # Re-orient data into columns for efficient batch tokenization
+        columns = {}
+        if hasattr(data, "columns"):
+            # Polars/pandas DataFrame
+            for column in data.columns:
+                columns[column] = list(data[column])
         else:
-            # Re-orient data into columns for efficient batch tokenization
-            columns = {}
-            if hasattr(data, "columns"):
-                # Polars/pandas DataFrame
-                for column in data.columns:
-                    columns[column] = list(data[column])
-            else:
-                # Iterable dicts
-                for row in data:
-                    for column in row.keys():
-                        if column not in columns:
-                            columns[column] = []
+            # Iterable dicts
+            for row in data:
+                for column in row.keys():
+                    if column not in columns:
+                        columns[column] = []
 
-                        columns[column].append(row[column])
+                    columns[column].append(row[column])
 
             # Process column-oriented data
-            tokens = Tokens(fn(columns))
-
-        return tokens
+        return Tokens(fn(columns))
 
     def labels(self, data):
         """

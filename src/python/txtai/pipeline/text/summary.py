@@ -42,8 +42,7 @@ class Summary(HFPipeline):
         # Build keyword arguments
         kwargs = self.args(minlength, maxlength)
 
-        inputs = [text for _, text in params if text]
-        if inputs:
+        if inputs := [text for _, text in params if text]:
             # Run summarization pipeline
             results = self.pipeline(inputs, num_workers=workers, **kwargs)
 

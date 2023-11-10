@@ -73,7 +73,7 @@ class Questions(Data):
                     end -= 1
 
                 # Label with CLS token if out of span
-                if not (offset[start][0] <= startchar and offset[end][1] >= endchar):
+                if offset[start][0] > startchar or offset[end][1] < endchar:
                     tokenized["start_positions"].append(clstoken)
                     tokenized["end_positions"].append(clstoken)
                 else:

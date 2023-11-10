@@ -36,14 +36,13 @@ class Application:
         st.title("Article Summary")
         st.markdown("This application builds a summary of an article.")
 
-        url = st.text_input("URL")
-        if url:
+        if url := st.text_input("URL"):
             # Run workflow and get summary
             summary = list(self.workflow([url]))[0]
 
             # Write results
             st.write(summary)
-            st.markdown("*Source: " + url + "*")
+            st.markdown(f"*Source: {url}*")
 
 
 @st.cache(allow_output_mutation=True)

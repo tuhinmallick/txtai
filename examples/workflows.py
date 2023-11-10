@@ -151,9 +151,10 @@ class Process:
             query: input query
         """
 
-        if self.application and query:
-            st.markdown(
-                """
+        if not self.application or not query:
+            return
+        st.markdown(
+            """
             <style>
             table td:nth-child(1) {
                 display: none
@@ -164,25 +165,25 @@ class Process:
             table {text-align: left !important}
             </style>
             """,
-                unsafe_allow_html=True,
-            )
+            unsafe_allow_html=True,
+        )
 
-            results = []
-            for result in self.application.search(query, 5):
+        results = []
+        for result in self.application.search(query, 5):
                 # Text is only present when content is stored
-                if "text" not in result:
-                    uid, score = result["id"], result["score"]
-                    results.append({"text": self.find(uid), "score": f"{score:.2}"})
-                else:
-                    if "id" in result and "text" in result:
-                        result["text"] = self.content(result.pop("id"), result["text"])
-                    if "score" in result and result["score"]:
-                        result["score"] = f'{result["score"]:.2}'
+            if "text" not in result:
+                uid, score = result["id"], result["score"]
+                results.append({"text": self.find(uid), "score": f"{score:.2}"})
+            else:
+                if "id" in result:
+                    result["text"] = self.content(result.pop("id"), result["text"])
+                if "score" in result and result["score"]:
+                    result["score"] = f'{result["score"]:.2}'
 
-                    results.append(result)
+                results.append(result)
 
-            df = pd.DataFrame(results)
-            st.write(df.to_html(escape=False), unsafe_allow_html=True)
+        df = pd.DataFrame(results)
+        st.write(df.to_html(escape=False), unsafe_allow_html=True)
 
     def find(self, key):
         """
@@ -233,8 +234,7 @@ class Application:
             (names of components loaded, workflow config, file changed)
         """
 
-        workflow = st.file_uploader("Load workflow", type=["yml"])
-        if workflow:
+        if workflow := st.file_uploader("Load workflow", type=["yml"]):
             # Detect file upload change
             upload = workflow.name != self.state("path")
             st.session_state["path"] = workflow.name
@@ -269,10 +269,7 @@ class Application:
             variable value
         """
 
-        if key in st.session_state:
-            return st.session_state[key]
-
-        return None
+        return st.session_state[key] if key in st.session_state else None
 
     def appsetting(self, workflow, name):
         """
@@ -287,8 +284,7 @@ class Application:
         """
 
         if workflow:
-            config = workflow.get("app")
-            if config:
+            if config := workflow.get("app"):
                 return config.get(name)
 
         return None
@@ -432,8 +428,12 @@ class Application:
             if component in ["service", "translation"]:
                 # Service config is found in tasks section
                 tasks = list(workflow["workflow"].values())[0]["tasks"]
-                tasks = [task for task in tasks if task.get("task") == component or task.get("action") == component]
-                if tasks:
+                if tasks := [
+                    task
+                    for task in tasks
+                    if task.get("task") == component
+                    or task.get("action") == component
+                ]:
                     config = tasks[0]
             else:
                 config = workflow.get(component)
@@ -537,8 +537,7 @@ class Application:
                 tasks.append({"action": wtype})
 
             elif wtype == "service":
-                config = {**component}
-                config["task"] = wtype
+                config = {**component, "task": wtype}
                 tasks.append(config)
 
             elif wtype == "summary":
@@ -729,8 +728,11 @@ class Application:
                     config.update({"app": {"data": self.state("data"), "query": self.state("query")}})
                     config = yaml.dump(config)
 
-                    api = col1.button("API", key="api", help="Start an API instance within this application")
-                    if api:
+                    if api := col1.button(
+                        "API",
+                        key="api",
+                        help="Start an API instance within this application",
+                    ):
                         with st.spinner(f"Running workflow '{name}' via API service, click stop to terminate"):
                             self.api(config)
 

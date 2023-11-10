@@ -430,9 +430,7 @@ class Common:
             # Create an index using mixed data (text and documents)
             data = []
             for uid, text in enumerate(self.data):
-                data.append((uid, text, None))
-                data.append((uid, {"content": text}, None))
-
+                data.extend(((uid, text, None), (uid, {"content": text}, None)))
             embeddings.index(data)
 
             # Search for best match

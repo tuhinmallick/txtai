@@ -157,10 +157,9 @@ class Topics:
             # Merge communities
             merge[key].extend(uids)
 
-        # Sort communities largest to smallest since the order could have changed with merges
-        results = {}
-        for k, v in sorted(merge.items(), key=lambda x: len(x[1]), reverse=True):
-            # Create composite string key using topic terms and store ids
-            results["_".join(termslist[k])] = v
-
-        return results
+        return {
+            "_".join(termslist[k]): v
+            for k, v in sorted(
+                merge.items(), key=lambda x: len(x[1]), reverse=True
+            )
+        }

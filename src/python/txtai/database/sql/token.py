@@ -39,10 +39,7 @@ class Token:
             tokens[x] if x is a valid position, None otherwise
         """
 
-        if 0 <= x < len(tokens):
-            return tokens[x]
-
-        return None
+        return tokens[x] if 0 <= x < len(tokens) else None
 
     @staticmethod
     def isalias(tokens, x, alias):

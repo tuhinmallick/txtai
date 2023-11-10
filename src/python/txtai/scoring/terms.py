@@ -379,8 +379,7 @@ class Terms:
 
         uids, freqs = None, None
 
-        result = self.cursor.execute(Terms.SELECT_TERMS, [term]).fetchone()
-        if result:
+        if result := self.cursor.execute(Terms.SELECT_TERMS, [term]).fetchone():
             uids, freqs = (array("q"), array("q"))
             uids.frombytes(result[0])
             freqs.frombytes(result[1])

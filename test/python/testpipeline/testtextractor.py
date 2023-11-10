@@ -21,7 +21,7 @@ class TestTextractor(unittest.TestCase):
         """
 
         textractor = Textractor(tika=False)
-        text = textractor(Utils.PATH + "/tabular.csv")
+        text = textractor(f"{Utils.PATH}/tabular.csv")
         self.assertEqual(len(text), 125)
 
     def testCheckJava(self):
@@ -40,7 +40,7 @@ class TestTextractor(unittest.TestCase):
         textractor = Textractor(lines=True)
 
         # Extract text as lines
-        lines = textractor(Utils.PATH + "/article.pdf")
+        lines = textractor(f"{Utils.PATH}/article.pdf")
 
         # Check number of lines is as expected
         self.assertEqual(len(lines), 35)
@@ -53,7 +53,7 @@ class TestTextractor(unittest.TestCase):
         textractor = Textractor(paragraphs=True)
 
         # Extract text as sentences
-        paragraphs = textractor(Utils.PATH + "/article.pdf")
+        paragraphs = textractor(f"{Utils.PATH}/article.pdf")
 
         # Check number of paragraphs is as expected
         self.assertEqual(len(paragraphs), 13)
@@ -66,7 +66,7 @@ class TestTextractor(unittest.TestCase):
         textractor = Textractor(sentences=True)
 
         # Extract text as sentences
-        sentences = textractor(Utils.PATH + "/article.pdf")
+        sentences = textractor(f"{Utils.PATH}/article.pdf")
 
         # Check number of sentences is as expected
         self.assertEqual(len(sentences), 17)
@@ -79,7 +79,7 @@ class TestTextractor(unittest.TestCase):
         textractor = Textractor()
 
         # Extract text as a single block
-        text = textractor(Utils.PATH + "/article.pdf")
+        text = textractor(f"{Utils.PATH}/article.pdf")
 
         # Check length of text is as expected
         self.assertEqual(len(text), 2301)

@@ -63,15 +63,16 @@ class PipelineFactory:
             {short name: pipeline class}
         """
 
-        pipelines = {}
-
         # Get handle to pipeline module
         pipeline = sys.modules[".".join(__name__.split(".")[:-1])]
 
-        # Get list of callable pipelines
-        for x in inspect.getmembers(pipeline, inspect.isclass):
-            if issubclass(x[1], Pipeline) and [y for y, _ in inspect.getmembers(x[1], inspect.isfunction) if y == "__call__"]:
-                # short name: pipeline class
-                pipelines[x[0].lower()] = x[1]
-
-        return pipelines
+        return {
+            x[0].lower(): x[1]
+            for x in inspect.getmembers(pipeline, inspect.isclass)
+            if issubclass(x[1], Pipeline)
+            and [
+                y
+                for y, _ in inspect.getmembers(x[1], inspect.isfunction)
+                if y == "__call__"
+            ]
+        }

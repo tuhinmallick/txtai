@@ -42,12 +42,11 @@ def apirouters():
     # Get handle to api module
     api = sys.modules[".".join(__name__.split(".")[:-1])]
 
-    available = {}
-    for name, rclass in inspect.getmembers(api, inspect.ismodule):
-        if hasattr(rclass, "router") and isinstance(rclass.router, APIRouter):
-            available[name.lower()] = rclass.router
-
-    return available
+    return {
+        name.lower(): rclass.router
+        for name, rclass in inspect.getmembers(api, inspect.ismodule)
+        if hasattr(rclass, "router") and isinstance(rclass.router, APIRouter)
+    }
 
 
 @app.on_event("startup")
@@ -82,9 +81,7 @@ def start():
     if "embeddings" in config and "similarity" not in config:
         app.include_router(routers["similarity"])
 
-    # Execute extensions if present
-    extensions = os.getenv("EXTENSIONS")
-    if extensions:
+    if extensions := os.getenv("EXTENSIONS"):
         for extension in extensions.split(","):
             # Create instance and execute extension
             extension = Factory.get(extension.strip())()

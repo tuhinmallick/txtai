@@ -291,8 +291,4 @@ class Translation(HFModel):
             best match or None if no match found
         """
 
-        for lang in languages:
-            if lang.startswith(target):
-                return lang
-
-        return None
+        return next((lang for lang in languages if lang.startswith(target)), None)

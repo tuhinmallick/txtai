@@ -48,8 +48,7 @@ class TaskFactory:
         # Create lambda function if additional arguments present
         if "args" in config:
             args = config.pop("args")
-            action = config["action"]
-            if action:
+            if action := config["action"]:
                 if isinstance(action, list):
                     config["action"] = [Partial.create(a, args[i]) for i, a in enumerate(action)]
                 else:
